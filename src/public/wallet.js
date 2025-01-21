@@ -6,7 +6,9 @@ class WalletManager {
     }
 
     initializeWebSocket() {
-        this.ws = new WebSocket(`ws://${window.location.host}`);
+        // Use secure WebSocket in production, regular in development
+        const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        this.ws = new WebSocket(`${protocol}${window.location.host}`);
         
         this.ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -15,6 +17,17 @@ class WalletManager {
             } else if (data.type === 'message') {
                 this.addMessageToChat(data);
             }
+        };
+
+        // Add error handling
+        this.ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            this.showNotification('Connection error. Please try again.');
+        };
+
+        this.ws.onclose = () => {
+            console.log('WebSocket closed. Attempting to reconnect...');
+            setTimeout(() => this.initializeWebSocket(), 3000); // Retry connection after 3 seconds
         };
     }
 
@@ -120,7 +133,17 @@ class WalletManager {
                 content: content,
                 timestamp: Date.now()
             };
-            this.ws.send(JSON.stringify(message));
+            try {
+                this.ws.send(JSON.stringify(message));
+            } catch (error) {
+                console.error('Failed to send message:', error);
+                this.showNotification('Failed to send message. Please try again.');
+                // Attempt to reconnect
+                this.initializeWebSocket();
+            }
+        } else {
+            this.showNotification('Connection lost. Reconnecting...');
+            this.initializeWebSocket();
         }
     }
 
