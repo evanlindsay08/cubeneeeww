@@ -51,7 +51,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 // Route for the home page
 app.get('/', (req: Request, res: Response) => {
@@ -171,4 +171,9 @@ app.use((err: Error, req: Request, res: Response, next: Function) => {
 
 server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
+});
+
+// If you have an API endpoint for the username, ensure it's properly defined
+app.get('/api/username', (req, res) => {
+    // Your username logic here
 }); 

@@ -145,4 +145,14 @@ class WalletManager {
     }
 }
 
-window.walletManager = new WalletManager(); 
+window.walletManager = new WalletManager();
+
+// Make sure API calls use relative paths
+async function fetchUsername() {
+    try {
+        const response = await fetch('/api/username');
+        // ... rest of the code
+    } catch (error) {
+        console.error('Error fetching username:', error);
+    }
+} 
