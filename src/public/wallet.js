@@ -126,6 +126,19 @@ class WalletManager {
             return;
         }
 
+        // Add banned words list
+        const bannedWords = ['rug', 'scam', 'bundle', 'fake', 'relaunch'];
+        
+        // Check for banned words (case insensitive)
+        const containsBannedWord = bannedWords.some(word => 
+            content.toLowerCase().includes(word.toLowerCase())
+        );
+
+        if (containsBannedWord) {
+            this.showNotification('Message contains prohibited words');
+            return;
+        }
+
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             const message = {
                 type: 'message',
