@@ -45,6 +45,13 @@ const MAX_MESSAGES = 100;
 // Global username storage
 const connectedUsers = new Map<string, string>(); // websocket ID -> username
 
+// Add banned phrases to server-side validation
+const bannedPhrases = [
+    'rug', 'scam', 'bundle', 'fake', 'relaunch',
+    'r3g', 'sc3m', 'f4ke',
+    'dev sold', 'dev is jeet', 'dev is indian'
+];
+
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
     res.status(200).send('OK');
@@ -101,6 +108,15 @@ wss.on('connection', (ws: WebSocket) => {
                     }
                 });
             } else if (message.type === 'message') {
+                // Check for banned phrases
+                const containsBannedPhrase = bannedPhrases.some(phrase => 
+                    message.content.toLowerCase().includes(phrase.toLowerCase())
+                );
+
+                if (containsBannedPhrase) {
+                    return; // Silently reject banned messages
+                }
+
                 // Assign color to user if they don't have one
                 if (!userColors.has(message.username)) {
                     const availableColors = COLORS.filter(color => 

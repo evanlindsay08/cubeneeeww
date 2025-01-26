@@ -126,16 +126,20 @@ class WalletManager {
             return;
         }
 
-        // Add banned words list
-        const bannedWords = ['rug', 'scam', 'bundle', 'fake', 'relaunch'];
+        // Update banned words/phrases list
+        const bannedPhrases = [
+            'rug', 'scam', 'bundle', 'fake', 'relaunch',
+            'r3g', 'sc3m', 'f4ke',
+            'dev sold', 'dev is jeet', 'dev is indian'
+        ];
         
-        // Check for banned words (case insensitive)
-        const containsBannedWord = bannedWords.some(word => 
-            content.toLowerCase().includes(word.toLowerCase())
+        // Check for banned phrases (case insensitive)
+        const containsBannedPhrase = bannedPhrases.some(phrase => 
+            content.toLowerCase().includes(phrase.toLowerCase())
         );
 
-        if (containsBannedWord) {
-            this.showNotification('Message contains prohibited words');
+        if (containsBannedPhrase) {
+            this.showNotification('Message contains prohibited words/phrases');
             return;
         }
 
